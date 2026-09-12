@@ -1,2 +1,366 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit&display=swap');
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
+
+/* ================================================================
+   DESIGN TOKENS
+   Constructivism × Editorial — poster-flat blocks + magazine grid
+   ================================================================ */
+@theme {
+	--font-space: 'Space Grotesk', sans-serif;
+	--font-outfit: 'Outfit', sans-serif;
+
+	--color-warm-white: #f2f0e6;
+	--color-ink: #171717;
+	--color-vermilion: #d92d20;
+	--color-constructive: #2e7d32;
+
+	--nav-h: 4.5rem;
+}
+
+/* ================================================================
+   SKALA TIPOGRAFI — Golden Ratio (φ ≈ 1.618)
+   Semua ukuran fluid: rem sebagai jangkar + dvw/dvh sebagai penggerak,
+   jadi otomatis menyesuaikan lebar & tinggi layar tanpa breakpoint manual.
+   ================================================================ */
+:root {
+	--golden: 1.618;
+
+	/* Teks berjalan (body/paragraf) — tumbuh halus mengikuti lebar layar */
+	--fs-base: clamp(1rem, 0.95rem + 0.25dvw, 1.125rem);
+
+	/* Label kecil (kicker, runner, tag, blok) = base ÷ φ */
+	--fs-label: clamp(0.625rem, calc(var(--fs-base) / var(--golden)), 0.75rem);
+
+	/* Headline pembuka ("Halo! Namaku...") — fluid lewat dvw + dvh,
+     selaras dengan hero yang berbasis 100dvh */
+	--fs-headline: clamp(2.25rem, 3dvw + 3dvh, 4.5rem);
+
+	/* Nama (elemen paling vokal) = headline × φ — rasio emas
+     dijaga otomatis di semua ukuran layar lewat calc() */
+	--fs-display: calc(var(--fs-headline) * var(--golden));
+}
+
+/* ================================================================
+   BASE
+   Outfit = font isi/konten (default body).
+   Space Grotesk = dikhususkan untuk heading (h1–h6 + kelas judul hero).
+   ================================================================ */
+@layer base {
+	html {
+		scroll-behavior: smooth;
+	}
+
+	body {
+		@apply bg-warm-white font-outfit text-ink antialiased;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-space;
+	}
+
+	section[id] {
+		scroll-margin-top: var(--nav-h);
+	}
+
+	::selection {
+		@apply bg-vermilion text-warm-white;
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--color-vermilion);
+		outline-offset: 3px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			transition-duration: 0.01ms !important;
+		}
+	}
+}
+
+/* ================================================================
+   DESIGN PRIMITIVES — Tailwind utilities dikomposisi jadi token
+   ================================================================ */
+@layer components {
+	/* -- Tipografi editorial ------------------------------------- */
+
+	/* Label kecil, uppercase, tracking lebar — kicker khas majalah.
+     Konten, jadi tetap ikut font-outfit dari body (tidak di-override). */
+	.text-kicker {
+		@apply font-bold tracking-[0.28em] text-ink/70 uppercase;
+		font-size: var(--fs-label);
+	}
+
+	/* Angka/label runner di pinggir kolom, gaya catatan kaki cetak */
+	.text-runner {
+		@apply tracking-wide text-ink/50;
+		font-size: var(--fs-label);
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* -- Garis & marka konstruktivis ------------------------------ */
+
+	/* Garis tipis editorial, solid */
+	.rule-ink {
+		@apply h-px w-full bg-ink/20;
+	}
+
+	/* Garis bantu putus-putus — motif "petunjuk arah" khas sketsa/blueprint */
+	.line-guide {
+		@apply h-px w-full border-t border-dashed border-ink/25;
+	}
+
+	.line-guide-v {
+		@apply h-full w-px border-l border-dashed border-ink/25;
+	}
+
+	/* Ornamen garis diagonal tipis */
+	.diagonal-ink {
+		@apply h-px origin-left bg-ink/40;
+	}
+
+	/* Marka registrasi cetak (crosshair) — detail konstruktivis kecil */
+	.register-mark {
+		@apply relative inline-block h-3 w-3 shrink-0;
+	}
+	.register-mark::before,
+	.register-mark::after {
+		content: '';
+		@apply absolute bg-ink/50;
+	}
+	.register-mark::before {
+		@apply top-0 left-1/2 h-full w-px -translate-x-1/2;
+	}
+	.register-mark::after {
+		@apply top-1/2 left-0 h-px w-full -translate-y-1/2;
+	}
+
+	/* Sudut bracket ala jendela bidik kamera / crop mark editorial */
+	.corner-brackets {
+		@apply relative;
+	}
+	.corner-brackets::before,
+	.corner-brackets::after {
+		content: '';
+		@apply absolute h-2.5 w-2.5 border-ink;
+	}
+	.corner-brackets::before {
+		@apply top-0 left-0 border-t-2 border-l-2;
+	}
+	.corner-brackets::after {
+		@apply right-0 bottom-0 border-r-2 border-b-2;
+	}
+
+	/* -- Kartu biodata & bingkai foto -------------------------------- */
+
+	/* Bingkai foto persegi dengan sudut terpotong diagonal — "clip art"
+     ala poster konstruktivis, bukan sekadar foto kotak biasa */
+	.photo-frame {
+		@apply relative aspect-square w-full overflow-hidden bg-ink/10;
+		clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
+	}
+	.photo-frame img {
+		@apply h-full w-full object-cover;
+		filter: grayscale(12%) contrast(1.05);
+	}
+
+	/* Blok warna solid yang sengaja digeser di belakang foto,
+     memberi ilusi lapisan kertas yang ditumpuk */
+	.photo-frame-backdrop {
+		@apply absolute inset-0 -z-10 bg-vermilion;
+		transform: translate(0.9rem, 0.9rem);
+		clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
+	}
+
+	/* Aksen segitiga kecil menutup sudut yang terpotong, warna kontras */
+	.photo-frame-notch {
+		@apply pointer-events-none absolute right-0 bottom-0 z-10 bg-constructive;
+		width: 20%;
+		height: 20%;
+		clip-path: polygon(100% 0, 100% 100%, 0 100%);
+	}
+
+	/* -- Blok warna & tag ------------------------------------------ */
+
+	/* Blok merah solid ala poster propaganda konstruktivis */
+	.block-vermilion {
+		@apply inline-block bg-vermilion px-3 py-1 font-bold tracking-widest text-warm-white uppercase;
+		font-size: var(--fs-label);
+	}
+
+	/* Tag outline hijau (aksen "constructive") */
+	.tag-constructive {
+		@apply inline-flex items-center gap-2 border border-constructive px-3 py-1 font-bold tracking-widest text-constructive uppercase;
+		font-size: var(--fs-label);
+	}
+
+	/* Tombol/tautan dengan garis bawah sketsa yang tumbuh saat hover */
+	.underline-sketch {
+		@apply relative pb-0.5 no-underline;
+		background-image: linear-gradient(var(--color-vermilion), var(--color-vermilion));
+		background-repeat: no-repeat;
+		background-position: 0 100%;
+		background-size: 0% 2px;
+		transition: background-size 0.25s ease;
+		filter: var(--sketch-wobble);
+	}
+	.underline-sketch:hover,
+	.underline-sketch:focus-visible,
+	.underline-sketch[aria-current='true'] {
+		background-size: 100% 2px;
+	}
+
+	/* -- Tekstur sketsa ---------------------------------------------- */
+
+	/* Filter "digoyang tangan" untuk garis-garis, dipakai lewat kelas ini */
+	.sketch-wobble {
+		filter: var(--sketch-wobble);
+	}
+
+	/* Overlay bintik kertas halus, taruh di elemen dekoratif aria-hidden */
+	.paper-grain {
+		background-image: var(--noise-svg);
+		background-size: 180px 180px;
+		mix-blend-mode: multiply;
+		opacity: 0.05;
+	}
+
+	/* Overlay garis bantu kolom & baris, gaya kertas milimeter/blueprint editorial */
+	.blueprint-overlay {
+		background-image:
+			repeating-linear-gradient(
+				to right,
+				transparent 0,
+				transparent calc(100% / 6 - 1px),
+				rgba(23, 23, 23, 0.06) calc(100% / 6 - 1px),
+				rgba(23, 23, 23, 0.06) calc(100% / 6)
+			),
+			repeating-linear-gradient(
+				to bottom,
+				transparent 0,
+				transparent 7.9rem,
+				rgba(23, 23, 23, 0.05) 7.9rem,
+				rgba(23, 23, 23, 0.05) 8rem
+			);
+	}
+	@media (min-width: 768px) {
+		.blueprint-overlay {
+			background-image:
+				repeating-linear-gradient(
+					to right,
+					transparent 0,
+					transparent calc(100% / 12 - 1px),
+					rgba(23, 23, 23, 0.06) calc(100% / 12 - 1px),
+					rgba(23, 23, 23, 0.06) calc(100% / 12)
+				),
+				repeating-linear-gradient(
+					to bottom,
+					transparent 0,
+					transparent 7.9rem,
+					rgba(23, 23, 23, 0.05) 7.9rem,
+					rgba(23, 23, 23, 0.05) 8rem
+				);
+		}
+	}
+}
+
+/* ================================================================
+   VARIABEL BANTU untuk filter SVG data-uri
+   (dideklarasikan di :root supaya bisa dipakai lewat var())
+   ================================================================ */
+:root {
+	--sketch-wobble: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='4' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='1.4'/%3E%3C/filter%3E%3C/svg%3E#r");
+	--noise-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ================================================================
+   KARTU BIODATA
+   Grid 2-kolom yang tetap dipertahankan di mobile (bukan stack 1 kolom):
+   biodata di kiri (fleksibel), foto kecil ala kartu ID di kanan.
+   ================================================================ */
+.bio-grid {
+	@apply grid items-start;
+	grid-template-columns: minmax(0, 1fr) clamp(6rem, 24dvw, 11rem);
+	gap: clamp(1.25rem, 4dvw, 3rem);
+}
+@media (min-width: 768px) {
+	.bio-grid {
+		grid-template-columns: minmax(0, 1fr) clamp(9rem, 16dvw, 14rem);
+	}
+}
+
+/* Baris data (label ↔ nilai), dipisah garis bantu putus-putus */
+.bio-row {
+	@apply grid grid-cols-[auto_1fr] items-baseline gap-3 py-3 sm:gap-6;
+}
+
+/* Bingkai foto persegi dengan sudut "dipotong" ala clip-art konstruktivis */
+.photo-frame {
+	@apply relative aspect-square w-full overflow-hidden border border-ink bg-ink/5;
+	clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
+}
+.photo-frame img {
+	@apply h-full w-full object-cover contrast-105 grayscale-[15%];
+	filter: var(--sketch-wobble);
+}
+/* Segitiga vermilion pengisi sudut yang terpotong */
+.photo-frame::after {
+	content: '';
+	@apply absolute right-0 bottom-0 bg-vermilion;
+	width: 26%;
+	height: 26%;
+	clip-path: polygon(100% 0, 0 100%, 100% 100%);
+}
+
+/* ================================================================
+   NAVIGASI
+   ================================================================ */
+.nav-shell {
+	@apply fixed inset-x-0 top-0 z-50 h-(--nav-h) border-b border-ink/15 bg-warm-white/90 backdrop-blur;
+}
+
+.nav-progress {
+	@apply absolute inset-x-0 bottom-0 h-[2px] origin-left bg-vermilion;
+	transition: transform 0.1s linear;
+}
+
+.nav-mobile-panel {
+	@apply fixed inset-0 z-40 flex flex-col justify-between bg-warm-white px-6 pt-(--nav-h) pb-10;
+	transform: translateY(-100%);
+	transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.nav-mobile-panel.is-open {
+	transform: translateY(0%);
+}
+
+/* ================================================================
+   HERO
+   ================================================================ */
+.hero {
+	@apply relative flex h-[100dvh] w-full flex-col overflow-hidden bg-warm-white px-6 pt-24 pb-8 text-ink sm:h-[95dvh] md:px-16 lg:px-32;
+}
+
+.Introduce {
+	@apply relative z-10 font-space font-bold;
+	font-size: var(--fs-headline);
+	text-shadow: 2rem 0.5rem 0.7rem hsla(108, 35%, 36%, 0.15);
+}
+
+.name-introduce {
+	@apply relative z-10 pb-10 text-right font-space leading-none font-bold tracking-tighter md:pb-16;
+	/* φ × ukuran headline — rasio emas terjaga di semua lebar layar */
+	font-size: var(--fs-display);
+}
