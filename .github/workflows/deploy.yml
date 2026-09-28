@@ -36,7 +36,9 @@ jobs:
         working-directory: my-app
 
       - name: Build site
-        run: npm run build
+        run: |
+          npm run build
+          ls -la build
         working-directory: my-app
 
       - name: Upload Artifacts
