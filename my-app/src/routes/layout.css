@@ -15,6 +15,7 @@
 	--color-ink: #171717;
 	--color-vermilion: #d92d20;
 	--color-constructive: #2e7d32;
+	--color-ochre: #e8a33d;
 
 	--nav-h: 4.5rem;
 }
@@ -63,6 +64,16 @@
 	h5,
 	h6 {
 		@apply font-space;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	p {
+		overflow-wrap: break-word;
 	}
 
 	section[id] {
@@ -274,6 +285,48 @@
 					rgba(23, 23, 23, 0.05) 8rem
 				);
 		}
+	}
+
+	/* -- Heading seksi & aksen konstruktivis ----------------------- */
+
+	/* Heading seksi standar dengan fluid type scale */
+	.h2-section {
+		@apply font-space font-bold tracking-tight text-ink;
+		font-size: var(--fs-headline);
+		line-height: 1.2;
+	}
+
+	/* Aksen garis bawah vermilion untuk heading seksi — minimum 2px × 2rem */
+	.heading-accent {
+		@apply block h-[2px] bg-vermilion;
+		min-width: 2rem;
+		width: clamp(2rem, 10%, 5rem);
+	}
+
+	/* -- Offset blok konten diagonal ------------------------------ */
+
+	/* Offset ke kanan — untuk seksi ganjil di mobile */
+	.offset-block {
+		margin-left: clamp(1rem, 4dvw, 3rem);
+	}
+
+	/* Offset ke kiri (right-aligned) — untuk seksi genap di mobile */
+	.offset-block-right {
+		margin-right: clamp(1rem, 4dvw, 3rem);
+		margin-left: auto;
+	}
+
+	/* -- Pemisah diagonal antar seksi ----------------------------- */
+
+	/* Pemisah diagonal: menggunakan pseudo-element dengan clip-path */
+	.diagonal-separator {
+		@apply relative overflow-visible;
+	}
+	.diagonal-separator::after {
+		content: '';
+		@apply absolute inset-x-0 -bottom-3 h-6 bg-inherit;
+		clip-path: polygon(0 0, 100% 60%, 100% 100%, 0 100%);
+		z-index: 1;
 	}
 }
 

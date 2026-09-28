@@ -23,9 +23,6 @@
   Lompat ke konten
 </a>
 
-<!-- Garis bantu kolom & baris, dekoratif, mengikuti tema kertas editorial -->
-<div class="blueprint-overlay pointer-events-none fixed inset-0 z-0" aria-hidden="true"></div>
-
 <Nav />
 
 <main id="konten" class="relative z-10 min-h-dvh bg-transparent text-ink font-space">
