@@ -9,8 +9,7 @@ const config = {
 			fallback: '404.html'
 		}),
 		paths: {
-			base:
-				process.env.NODE_ENV === 'production' ? '/M0405251024_AqilaFirzanahInas_AboutMeAI62' : ''
+			base: process.argv.includes('dev') ? '' : '/M0405251024_AqilaFirzanahInas_AboutMeAI62'
 		}
 	}
 };
